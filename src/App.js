@@ -6,13 +6,33 @@ import myEpicNft from './utils/MyEpicNFT.json';
 
 const TWITTER_HANDLE = "gespi_";
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-const OPENSEA_LINK = '';
 const TOTAL_MINT_COUNT = 99;
-const CONTRACT_ADDRESS = "0xddaf6372FA06E4fbD0e80EfabE88ddAB040f23C4";
+const CONTRACT_ADDRESS = "0x9Ea8e9C93024ff1EF59Dc6c58684AC5AE2f400e6";
+const OPENSEA_URL = "https://testnets.opensea.io/";
+const OPENSEA_COLLECTION = `${OPENSEA_URL}collection/3wordsnft-f1os4xzn0x`;
+const OPENSEA_ASSET_URL = `${OPENSEA_URL}assets/${CONTRACT_ADDRESS}/`;
+var OPENSEA_ASSET_TOKEN_URL = "";
+
 
 const App = () => {
 
   const [currentAccount, setCurrentAccount] = useState("");
+
+  function setMintedCountStatus(mintedCount) {
+    const status = document.getElementById("mintedCountStatus");
+    status.innerHTML = `${mintedCount}/${TOTAL_MINT_COUNT} NFTs Minted`;
+  }
+
+  function setMintedStatus() {
+    const status = document.getElementById("mintedStatus");
+    status.href = OPENSEA_ASSET_TOKEN_URL;
+    status.innerHTML = " Mint Complete 💪 Your NFT will be available for viewing on Opensea shortly";
+  }
+
+  function generateMintedNftUrl(mintedCount) {
+    OPENSEA_ASSET_TOKEN_URL = `${OPENSEA_ASSET_URL}${mintedCount}`;
+    console.log(`URL to Minted Item: ${OPENSEA_ASSET_TOKEN_URL}`);
+  }
 
   const checkIfWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -39,9 +59,11 @@ const App = () => {
       const account = accounts[0];
       console.log("Found an authorized account:", account);
       setCurrentAccount(account)
+
     } else {
       console.log("No authorized account found")
     }
+    
   }
 
   /*
@@ -66,37 +88,7 @@ const App = () => {
       */
       console.log("Connected", accounts[0]);
       setCurrentAccount(accounts[0]);
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
-
-  // Setup our listener.
-  const setupEventListener = async () => {
-    // Most of this looks the same as our function askContractToMintNft
-    try {
-      const { ethereum } = window;
-
-      if (ethereum) {
-        // Same stuff again
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, signer);
-
-        // THIS IS THE MAGIC SAUCE.
-        // This will essentially "capture" our event when our contract throws it.
-        // If you're familiar with webhooks, it's very similar to that!
-        connectedContract.on("NewEpicNFTMinted", (from, tokenId) => {
-          console.log(from, tokenId.toNumber())
-          alert(`Hey there! We've minted your NFT and sent it to your wallet. It may be blank right now. It can take a max of 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`)
-        });
-
-        console.log("Setup event listener!")
-
-      } else {
-        console.log("Ethereum object doesn't exist!");
-      }
     } catch (error) {
       console.log(error)
     }
@@ -118,6 +110,17 @@ const App = () => {
           await nftTxn.wait();
           
           console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+          
+          let mintedCount = await connectedContract.getTotalNFTsMintedSoFar();
+          
+          // since we minted a NFT successfully lets update this on our site
+          getMintedCount();
+
+          // generate URL for users newly Minted NFT
+          generateMintedNftUrl(mintedCount);
+
+          // send user the link to their NFT
+          setMintedStatus();
 
         } else {
           console.log("Ethereum object doesn't exist!");
@@ -127,7 +130,35 @@ const App = () => {
       }
   }
 
+
+  const getMintedCount = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, signer);
+
+        console.log("Going to pop wallet now to pay gas...");
+        let mintedCount = await connectedContract.getTotalNFTsMintedSoFar();
+
+        console.log("Calculating minted count...please wait.");
+        console.log(`Minted Count: ${mintedCount}`);
+
+        setMintedCountStatus(mintedCount)
+        return mintedCount
+
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
+    getMintedCount();
     checkIfWalletIsConnected();
   }, [])
 
@@ -138,9 +169,9 @@ const App = () => {
     <div className="App">
       <div className="container">
         <div className="header-container">
-          <p className="header gradient-text">My NFT Collection</p>
+          <p className="header gradient-text">3 Word NFTs</p>
           <p className="sub-text">
-            Each unique. Each beautiful. Discover your NFT today.
+            Each unique. Each beautiful. Randomly Generated 3 Worded NFT.
           </p>
           {currentAccount === "" ? (
             <button onClick={connectWallet} className="cta-button connect-wallet-button">
@@ -151,6 +182,18 @@ const App = () => {
                 Mint NFT
             </button>
             )}
+          <p>
+            <button className="cta-button opensea-button">
+              <a href={OPENSEA_COLLECTION} target="_blank" className="mint-count">🌊 View Collection on OpenSea</a>
+            </button>
+          </p>
+          <p>
+            <span id="mintedCountStatus" className="mint-count"></span>
+          </p>
+          <br/>
+          <p>
+            <a href={OPENSEA_ASSET_TOKEN_URL} id="mintedStatus" className="mint-count" target="_blank"></a>
+          </p>
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />

@@ -13,6 +13,10 @@ const main = async () => {
   txn = await nftContract.make3WordNFT()
   await txn.wait()
 
+  // mint another NFT
+  txn = await nftContract.make3WordNFT()
+  await txn.wait()
+
 };
 
 const runMain = async () => {

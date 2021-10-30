@@ -1,13 +1,13 @@
 .App {
   height: 100vh;
-  background-color: #0d1116;
+  /* background-color: #0d1116; */
   overflow: scroll;
   text-align: center;
 }
 
 .container {
   height: 100%;
-  background-color: #0d1116;
+  /* background-color: #0d1116; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -62,7 +62,7 @@
 }
 
 .opensea-button {
-  background-color: rgb(32, 129, 226);
+  background: rgb(32, 129, 226);
 }
 
 .mint-count {
@@ -122,4 +122,6 @@
   100% {
     background-position: 0% 50%;
   }
+
+  
 }

@@ -12,16 +12,16 @@ contract MyEpicNFT is ERC721URIStorage {
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
 
-  uint256 nftMintLimt = 99;
+  uint256 nftMintLimit = 99;
   string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
-  string[] firstWords  = ["Annoyed", "Gross", "Delighted", "Ominous", "Disheveled", "Filthy", "Graceful", "Homeless", "Docile", "Adamant", "Cosmic", "Holistic", "Mega", "Microscopic", "Lethargic", "Lost", "Determined"];
-  string[] secondWords = ["Jungle", "Pavement", "Sandwich", "Ketchup", "Lime", "Cap", "Imp", "Camel", "Cactus", "Death", "Turkey", "Commando", "Pianist", "Scubadiver", "Baluga", "Seltzer", "Buldge", "Soul"];
-  string[] thirdWords  = ["Skew", "Blasphemy", "Unite","Sprint", "Lift", "Karatechop", "Telekinetics", "Magic", "Creampie", "Destruction", "Fupa", "Volley", "Uppercut", "Trip", "Kamehameha", "Glide", "Rave", "Creation", "Devastation", "Manifest", "Calculate", "Brew"];  
+  string[] firstWords  = ["Annoyed", "Gross", "Delighted", "Ominous", "Disheveled", "Filthy", "Graceful", "Homeless", "Docile", "Adamant", "Cosmic", "Holistic", "Mega", "Microscopic", "Lethargic", "Lost", "Determined", "Hyper", "Fazed", "Drunken", "Dingus", "Ape", "Holy", "Demonic", "Neural", "Jolly", "Modest", "Impish", "Sassy", "Lonely", "Itchy", "Super", "Stupid", "Zealous", "Ugliest", "Vivacious", "Voluptuous", "Aloof", "Doozy"];
+  string[] secondWords = ["Jungle", "Pavement", "Sandwich", "Ketchup", "Lime", "Cap", "Imp", "Camel", "Cactus", "Death", "Turkey", "Commando", "Pianist", "Scubadiver", "Baluga", "Seltzer", "Buldge", "Soul", "Ape", "Butt", "Kanye", "Pepe", "Elon", "Booger", "Phantom", "Sasquatch", "CJFromGTA", "Miami", "Hamburgler", "Birdman", "Chupacabra", "Zeus", "Deity", "Triforce", "Toga", "Smoke", "Throat", "Toe", "Mastodon", "Baby", "Cash", "Crypto", "Dingus"];
+  string[] thirdWords  = ["Skew", "Blasphemy", "Unite","Sprint", "Lift", "Karatechop", "Telekinetics", "Magic", "Creampie", "Destruction", "Fupa", "Ape", "Volley", "Uppercut", "Trip", "Kamehameha", "Glide", "Rave", "Creation", "Devastation", "Manifest", "Calculate", "Brew", "Ignites", "Mining", "Jerk", "Turmoil", "Smack", "Eats", "Boogie", "Mimic", "Sweet-talk", "Castigate", "Defloccate", "Manduce", "Fartlek", "Whippersnapper", "Bamboozled", "Blubs", "Skedaddle", "Dingus"];  
 
   event NewEpicNFTMinted(address sender, uint256 tokenId);
 
   modifier checkMintLimit() {
-    require(getTotalNFTsMintedSoFar() <= nftMintLimt);
+    require(getTotalNFTsMintedSoFar() <= nftMintLimit, "NFT limit has been reached, there are no NFTs left to Mint");
     _;
   }
 
@@ -63,7 +63,7 @@ contract MyEpicNFT is ERC721URIStorage {
   }
 
 
-  function make3WordNFT() checkMintLimit public {
+  function make3WordNFT() public checkMintLimit {
     uint256 newItemId = _tokenIds.current();
 
     string memory first  = pickRandomFirstWord(newItemId);

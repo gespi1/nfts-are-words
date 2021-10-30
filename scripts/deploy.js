@@ -5,15 +5,15 @@ const main = async () => {
   console.log("Contract deployed to:", nftContract.address);
 
   // call the mint function
-  let txn = await nftContract.make3WordNFT()
+  // let txn = await nftContract.make3WordNFT()
   // wait for it to be minted
-  await txn.wait()
-  console.log("Minted NFT #1")
+  // await txn.wait()
+  // console.log("Minted NFT #1")
 
   // mint another NFT
-  txn = await nftContract.make3WordNFT()
-  await txn.wait()
-  console.log("Minted NFT #2")
+  // txn = await nftContract.make3WordNFT()
+  // await txn.wait()
+  // console.log("Minted NFT #2")
 
 };
 
